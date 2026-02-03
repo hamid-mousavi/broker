@@ -7,6 +7,10 @@ namespace Broker.Services
         Task<AdminUserListDto> GetUsersAsync(string? role = null, bool? isActive = null, bool? isVerified = null, int pageNumber = 1, int pageSize = 10);
         Task<AdminUserDto?> GetUserByIdAsync(int userId);
         Task<bool> UpdateUserStatusAsync(int userId, UpdateUserStatusDto updateDto);
+        Task<(AdminUserDto? User, string? Error)> UpdateUserAsync(int userId, UpdateAdminUserDto updateDto);
+        Task<bool> UpdateUserVerificationAsync(int userId, UpdateUserVerificationDto updateDto);
+        Task<bool> ResetUserPasswordAsync(int userId, AdminResetPasswordDto updateDto);
+        Task<bool> DeleteUserAsync(int userId);
         Task<List<VerificationRequestDto>> GetPendingVerificationsAsync();
         Task<bool> ApproveVerificationAsync(int verificationId, int adminUserId, ApproveVerificationDto approveDto);
         Task<bool> RejectVerificationAsync(int verificationId, int adminUserId, RejectVerificationDto rejectDto);

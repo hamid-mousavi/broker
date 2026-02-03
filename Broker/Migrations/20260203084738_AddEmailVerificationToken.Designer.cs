@@ -3,6 +3,7 @@ using System;
 using Broker.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Broker.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260203084738_AddEmailVerificationToken")]
+    partial class AddEmailVerificationToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,44 +95,6 @@ namespace Broker.Migrations
                     b.HasIndex("AgentId");
 
                     b.ToTable("AgentSpecializations");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AgentId = 1,
-                            SpecializationName = "واردات"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AgentId = 1,
-                            SpecializationName = "کالاهای صنعتی"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AgentId = 2,
-                            SpecializationName = "صادرات"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            AgentId = 2,
-                            SpecializationName = "مواد غذایی"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            AgentId = 3,
-                            SpecializationName = "ترانزیت"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            AgentId = 3,
-                            SpecializationName = "کالاهای حجیم"
-                        });
                 });
 
             modelBuilder.Entity("Broker.Models.Announcement", b =>
@@ -275,14 +240,6 @@ namespace Broker.Migrations
                         .IsUnique();
 
                     b.ToTable("CargoOwners");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            UserId = 5
-                        });
                 });
 
             modelBuilder.Entity("Broker.Models.ClearanceAgent", b =>
@@ -358,50 +315,6 @@ namespace Broker.Migrations
                         .IsUnique();
 
                     b.ToTable("ClearanceAgents");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AverageRating = 0m,
-                            City = "تهران",
-                            CompanyName = "شرکت ترخیص تهران",
-                            CompletedRequests = 0,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsVerified = true,
-                            Province = "تهران",
-                            TotalRatings = 0,
-                            UserId = 2,
-                            YearsOfExperience = 9
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AverageRating = 0m,
-                            City = "بندرعباس",
-                            CompanyName = "ترخیص هرمزگان",
-                            CompletedRequests = 0,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsVerified = true,
-                            Province = "هرمزگان",
-                            TotalRatings = 0,
-                            UserId = 3,
-                            YearsOfExperience = 6
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AverageRating = 0m,
-                            City = "چابهار",
-                            CompanyName = "ترخیص جنوب شرق",
-                            CompletedRequests = 0,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsVerified = true,
-                            Province = "سیستان و بلوچستان",
-                            TotalRatings = 0,
-                            UserId = 4,
-                            YearsOfExperience = 8
-                        });
                 });
 
             modelBuilder.Entity("Broker.Models.Document", b =>
@@ -880,73 +793,6 @@ namespace Broker.Migrations
                     b.HasIndex("PhoneNumber");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "admin@broker.ir",
-                            FirstName = "ادمین",
-                            IsActive = true,
-                            IsVerified = true,
-                            LastName = "سیستم",
-                            PasswordHash = "$2a$11$.GJSZORAU3Rfb9i2XRX98.8v/8VPZ3ysdChnj8OtTd9JRMhHXIy.W",
-                            PhoneNumber = "09120000001",
-                            Role = 3
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "mrezaei@broker.ir",
-                            FirstName = "محمد",
-                            IsActive = true,
-                            IsVerified = true,
-                            LastName = "رضایی",
-                            PasswordHash = "$2a$11$BmiKzEQ8yIOrYrDplREAmOP4kLCiTeG7nbXv5M4SrrqsHQMSPIs9.",
-                            PhoneNumber = "09120000002",
-                            Role = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "skazemi@broker.ir",
-                            FirstName = "ساناز",
-                            IsActive = true,
-                            IsVerified = true,
-                            LastName = "کاظمی",
-                            PasswordHash = "$2a$11$BmiKzEQ8yIOrYrDplREAmOP4kLCiTeG7nbXv5M4SrrqsHQMSPIs9.",
-                            PhoneNumber = "09120000003",
-                            Role = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "rhoseini@broker.ir",
-                            FirstName = "رضا",
-                            IsActive = true,
-                            IsVerified = true,
-                            LastName = "حسینی",
-                            PasswordHash = "$2a$11$BmiKzEQ8yIOrYrDplREAmOP4kLCiTeG7nbXv5M4SrrqsHQMSPIs9.",
-                            PhoneNumber = "09120000004",
-                            Role = 1
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "esamadi@broker.ir",
-                            FirstName = "الهام",
-                            IsActive = true,
-                            IsVerified = true,
-                            LastName = "صمدی",
-                            PasswordHash = "$2a$11$SoB3uAcYI1hdZ8TpW1ewceU04I9s5YDX65ZBFGtw6ImwM0wPwZxfW",
-                            PhoneNumber = "09120000005",
-                            Role = 2
-                        });
                 });
 
             modelBuilder.Entity("Broker.Models.VerificationRequest", b =>

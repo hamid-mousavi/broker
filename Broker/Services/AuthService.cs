@@ -91,7 +91,23 @@ namespace Broker.Services
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Email == loginDto.Email && u.IsActive);
 
-            if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
+            if (user == null || string.IsNullOrWhiteSpace(user.PasswordHash))
+            {
+                return null;
+            }
+
+            bool isPasswordValid;
+            try
+            {
+                isPasswordValid = BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash);
+            }
+            catch (Exception)
+            {
+                // Handle invalid/legacy hash formats without throwing 500
+                return null;
+            }
+
+            if (!isPasswordValid)
             {
                 return null;
             }

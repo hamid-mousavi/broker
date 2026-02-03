@@ -94,6 +94,86 @@ namespace Broker.Services
             return true;
         }
 
+        public async Task<(AdminUserDto? User, string? Error)> UpdateUserAsync(int userId, UpdateAdminUserDto updateDto)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return (null, "NOT_FOUND");
+
+            var emailExists = await _context.Users
+                .AnyAsync(u => u.Email == updateDto.Email && u.Id != userId);
+            if (emailExists)
+            {
+                return (null, "ایمیل وارد شده قبلا ثبت شده است");
+            }
+
+            user.FirstName = updateDto.FirstName;
+            user.LastName = updateDto.LastName;
+            user.Email = updateDto.Email;
+            user.PhoneNumber = updateDto.PhoneNumber;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return (new AdminUserDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Role = user.Role.ToString(),
+                IsVerified = user.IsVerified,
+                IsActive = user.IsActive,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt
+            }, null);
+        }
+
+        public async Task<bool> UpdateUserVerificationAsync(int userId, UpdateUserVerificationDto updateDto)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return false;
+
+            user.IsVerified = updateDto.IsVerified;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            if (user.Role == Models.UserRole.ClearanceAgent)
+            {
+                var agent = await _context.ClearanceAgents.FirstOrDefaultAsync(a => a.UserId == user.Id);
+                if (agent != null)
+                {
+                    agent.IsVerified = updateDto.IsVerified;
+                    agent.UpdatedAt = DateTime.UtcNow;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> ResetUserPasswordAsync(int userId, AdminResetPasswordDto updateDto)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return false;
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(updateDto.NewPassword);
+            user.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteUserAsync(int userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return false;
+
+            // Soft delete to avoid FK issues
+            user.IsActive = false;
+            user.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<List<VerificationRequestDto>> GetPendingVerificationsAsync()
         {
             var verifications = await _context.VerificationRequests

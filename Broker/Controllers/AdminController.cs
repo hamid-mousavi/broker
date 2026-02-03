@@ -72,6 +72,81 @@ namespace Broker.Controllers
             return Ok(ApiResponse<bool>.SuccessResponse(true, "وضعیت کاربر با موفقیت به‌روزرسانی شد"));
         }
 
+        [HttpPut("users/{id}")]
+        public async Task<ActionResult<ApiResponse<AdminUserDto>>> UpdateUser(int id, [FromBody] UpdateAdminUserDto updateDto)
+        {
+            if (!IsAdmin())
+                return Forbid();
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ApiResponse<AdminUserDto>.ErrorResponse("Invalid request data",
+                    ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList()));
+            }
+
+            var (user, error) = await _adminService.UpdateUserAsync(id, updateDto);
+            if (user == null)
+            {
+                if (error == "NOT_FOUND")
+                    return NotFound(ApiResponse<AdminUserDto>.ErrorResponse("User not found"));
+
+                return BadRequest(ApiResponse<AdminUserDto>.ErrorResponse(error ?? "Update failed"));
+            }
+
+            return Ok(ApiResponse<AdminUserDto>.SuccessResponse(user, "User updated successfully"));
+        }
+
+        [HttpPut("users/{id}/verify")]
+        public async Task<ActionResult<ApiResponse<bool>>> UpdateUserVerification(int id, [FromBody] UpdateUserVerificationDto updateDto)
+        {
+            if (!IsAdmin())
+                return Forbid();
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ApiResponse<bool>.ErrorResponse("Invalid request data",
+                    ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList()));
+            }
+
+            var result = await _adminService.UpdateUserVerificationAsync(id, updateDto);
+            if (!result)
+                return NotFound(ApiResponse<bool>.ErrorResponse("User not found"));
+
+            return Ok(ApiResponse<bool>.SuccessResponse(true, "User verification updated"));
+        }
+
+        [HttpPut("users/{id}/password")]
+        public async Task<ActionResult<ApiResponse<bool>>> ResetUserPassword(int id, [FromBody] AdminResetPasswordDto updateDto)
+        {
+            if (!IsAdmin())
+                return Forbid();
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ApiResponse<bool>.ErrorResponse("Invalid request data",
+                    ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList()));
+            }
+
+            var result = await _adminService.ResetUserPasswordAsync(id, updateDto);
+            if (!result)
+                return NotFound(ApiResponse<bool>.ErrorResponse("User not found"));
+
+            return Ok(ApiResponse<bool>.SuccessResponse(true, "Password updated successfully"));
+        }
+
+        [HttpDelete("users/{id}")]
+        public async Task<ActionResult<ApiResponse<bool>>> DeleteUser(int id)
+        {
+            if (!IsAdmin())
+                return Forbid();
+
+            var result = await _adminService.DeleteUserAsync(id);
+            if (!result)
+                return NotFound(ApiResponse<bool>.ErrorResponse("User not found"));
+
+            return Ok(ApiResponse<bool>.SuccessResponse(true, "User deleted successfully"));
+        }
+
         [HttpGet("verifications/pending")]
         public async Task<ActionResult<ApiResponse<List<VerificationRequestDto>>>> GetPendingVerifications()
         {
