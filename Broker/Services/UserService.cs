@@ -27,6 +27,7 @@ namespace Broker.Services
                 LastName = user.LastName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
+                ProfileImagePath = user.ProfileImagePath,
                 Role = user.Role.ToString(),
                 IsVerified = user.IsVerified,
                 IsActive = user.IsActive,

@@ -248,6 +248,67 @@ namespace Broker.Services
             return true;
         }
 
+        public async Task<List<AdminDocumentDto>> GetPendingDocumentsAsync()
+        {
+            var documents = await _context.Documents
+                .Include(d => d.User)
+                .Where(d => d.Status == Models.DocumentVerificationStatus.Pending)
+                .OrderByDescending(d => d.CreatedAt)
+                .ToListAsync();
+
+            return documents.Select(d =>
+            {
+                var userName = $"{d.User.FirstName} {d.User.LastName}".Trim();
+                if (string.IsNullOrWhiteSpace(userName))
+                {
+                    userName = d.User.Email;
+                }
+
+                return new AdminDocumentDto
+                {
+                    Id = d.Id,
+                    UserId = d.UserId,
+                    UserName = userName,
+                    UserEmail = d.User.Email,
+                    UserPhoneNumber = d.User.PhoneNumber,
+                    UserRole = d.User.Role.ToString(),
+                    DocumentType = d.DocumentType,
+                    FileName = d.FileName,
+                    FilePath = d.FilePath,
+                    Description = d.Description,
+                    IsVerified = d.IsVerified,
+                    Status = d.Status.ToString(),
+                    CreatedAt = d.CreatedAt
+                };
+            }).ToList();
+        }
+
+        public async Task<bool> ApproveDocumentAsync(int documentId)
+        {
+            var document = await _context.Documents.FirstOrDefaultAsync(d => d.Id == documentId);
+            if (document == null || document.Status != Models.DocumentVerificationStatus.Pending)
+                return false;
+
+            document.IsVerified = true;
+            document.Status = Models.DocumentVerificationStatus.Approved;
+            document.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> RejectDocumentAsync(int documentId)
+        {
+            var document = await _context.Documents.FirstOrDefaultAsync(d => d.Id == documentId);
+            if (document == null || document.Status != Models.DocumentVerificationStatus.Pending)
+                return false;
+
+            document.IsVerified = false;
+            document.Status = Models.DocumentVerificationStatus.Rejected;
+            document.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<StatisticsOverviewDto> GetStatisticsOverviewAsync()
         {
             var totalUsers = await _context.Users.CountAsync();

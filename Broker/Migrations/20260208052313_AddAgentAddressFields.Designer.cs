@@ -3,6 +3,7 @@ using System;
 using Broker.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Broker.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260208052313_AddAgentAddressFields")]
+    partial class AddAgentAddressFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -470,9 +473,6 @@ namespace Broker.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -920,7 +920,7 @@ namespace Broker.Migrations
                             IsActive = true,
                             IsVerified = true,
                             LastName = "سیستم",
-                            PasswordHash = "$2a$11$L7qlRYhjdmNKJBxPiz3ULe.mh/HbrNKtHPIklyiu61E9e7EGMVogG",
+                            PasswordHash = "$2a$11$wFD7wAld1IlltO4diAX7p.5Tc4qeCh55YJKGhhmJg3qdr0MuvA.LO",
                             PhoneNumber = "09120000001",
                             Role = 3
                         },
@@ -933,7 +933,7 @@ namespace Broker.Migrations
                             IsActive = true,
                             IsVerified = true,
                             LastName = "رضایی",
-                            PasswordHash = "$2a$11$wg.WFGDNz6Zch89G3w7R5.UsqPnxG/Rq/v6Eyqs/gSMD3/aSzfcNO",
+                            PasswordHash = "$2a$11$CHxGnGtfev059rBFxeWlBun97e6cwKr1w6cDVxL.O/ehjmNOT3maS",
                             PhoneNumber = "09120000002",
                             Role = 1
                         },
@@ -946,7 +946,7 @@ namespace Broker.Migrations
                             IsActive = true,
                             IsVerified = true,
                             LastName = "کاظمی",
-                            PasswordHash = "$2a$11$wg.WFGDNz6Zch89G3w7R5.UsqPnxG/Rq/v6Eyqs/gSMD3/aSzfcNO",
+                            PasswordHash = "$2a$11$CHxGnGtfev059rBFxeWlBun97e6cwKr1w6cDVxL.O/ehjmNOT3maS",
                             PhoneNumber = "09120000003",
                             Role = 1
                         },
@@ -959,7 +959,7 @@ namespace Broker.Migrations
                             IsActive = true,
                             IsVerified = true,
                             LastName = "حسینی",
-                            PasswordHash = "$2a$11$wg.WFGDNz6Zch89G3w7R5.UsqPnxG/Rq/v6Eyqs/gSMD3/aSzfcNO",
+                            PasswordHash = "$2a$11$CHxGnGtfev059rBFxeWlBun97e6cwKr1w6cDVxL.O/ehjmNOT3maS",
                             PhoneNumber = "09120000004",
                             Role = 1
                         },
@@ -972,7 +972,7 @@ namespace Broker.Migrations
                             IsActive = true,
                             IsVerified = true,
                             LastName = "صمدی",
-                            PasswordHash = "$2a$11$0M8L4nMonWlzOQc2lkCtBO9ekYditMCzKORSWZ4z1rumsPt9yXbRa",
+                            PasswordHash = "$2a$11$1S.76j5pYs.gKAesmcT/gupp6N5Zok6Ku0JLnyortcNEfFu.EVTv6",
                             PhoneNumber = "09120000005",
                             Role = 2
                         });

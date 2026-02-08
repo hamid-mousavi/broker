@@ -9,6 +9,7 @@ namespace Broker.DTOs.User
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
+        public string? ProfileImagePath { get; set; }
         public string Role { get; set; } = string.Empty;
         public bool IsVerified { get; set; }
         public bool IsActive { get; set; }
@@ -37,4 +38,3 @@ namespace Broker.DTOs.User
         public string NewPassword { get; set; } = string.Empty;
     }
 }
-

@@ -104,6 +104,12 @@ namespace Broker.Services
             if (updateDto.Address != null)
                 agent.Address = updateDto.Address;
 
+            if (updateDto.PersonalAddress != null)
+                agent.PersonalAddress = updateDto.PersonalAddress;
+
+            if (updateDto.LegalAddress != null)
+                agent.LegalAddress = updateDto.LegalAddress;
+
             if (updateDto.City != null)
                 agent.City = updateDto.City;
 
@@ -118,6 +124,18 @@ namespace Broker.Services
 
             if (updateDto.YearsOfExperience.HasValue)
                 agent.YearsOfExperience = updateDto.YearsOfExperience.Value;
+
+            if (updateDto.IsLegalEntity.HasValue)
+                agent.IsLegalEntity = updateDto.IsLegalEntity.Value;
+
+            if (updateDto.NationalId != null)
+                agent.NationalId = updateDto.NationalId;
+
+            if (updateDto.RegistrationNumber != null)
+                agent.RegistrationNumber = updateDto.RegistrationNumber;
+
+            if (updateDto.EconomicCode != null)
+                agent.EconomicCode = updateDto.EconomicCode;
 
             agent.UpdatedAt = DateTime.UtcNow;
 
@@ -231,6 +249,8 @@ namespace Broker.Services
                 LicenseNumber = agent.LicenseNumber,
                 Description = agent.Description,
                 Address = agent.Address,
+                PersonalAddress = agent.PersonalAddress,
+                LegalAddress = agent.LegalAddress,
                 City = agent.City,
                 Province = agent.Province,
                 PostalCode = agent.PostalCode,
@@ -240,6 +260,10 @@ namespace Broker.Services
                 TotalRatings = agent.TotalRatings,
                 CompletedRequests = agent.CompletedRequests,
                 IsVerified = agent.IsVerified,
+                IsLegalEntity = agent.IsLegalEntity,
+                NationalId = agent.NationalId,
+                RegistrationNumber = agent.RegistrationNumber,
+                EconomicCode = agent.EconomicCode,
                 Specializations = agent.Specializations.Select(s => s.SpecializationName).ToList(),
                 CreatedAt = agent.CreatedAt
             };

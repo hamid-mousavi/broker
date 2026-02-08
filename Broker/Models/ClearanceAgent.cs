@@ -24,6 +24,12 @@ namespace Broker.Models
         [StringLength(200)]
         public string? Address { get; set; }
 
+        [StringLength(200)]
+        public string? PersonalAddress { get; set; }
+
+        [StringLength(200)]
+        public string? LegalAddress { get; set; }
+
         [StringLength(50)]
         public string? City { get; set; }
 
@@ -46,6 +52,17 @@ namespace Broker.Models
         public int CompletedRequests { get; set; } = 0;
 
         public bool IsVerified { get; set; } = false;
+
+        public bool IsLegalEntity { get; set; } = false;
+
+        [StringLength(20)]
+        public string? NationalId { get; set; }
+
+        [StringLength(50)]
+        public string? RegistrationNumber { get; set; }
+
+        [StringLength(50)]
+        public string? EconomicCode { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

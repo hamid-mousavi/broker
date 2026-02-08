@@ -63,6 +63,21 @@ namespace Broker.Controllers
             return Ok(ApiResponse<AgentProfileDto>.SuccessResponse(result));
         }
 
+        [HttpGet("profile")]
+        [Authorize]
+        public async Task<ActionResult<ApiResponse<AgentProfileDto>>> GetMyProfile()
+        {
+            var userId = User.GetUserId();
+            if (userId == 0)
+                return Unauthorized(ApiResponse<AgentProfileDto>.ErrorResponse("User not authenticated"));
+
+            var result = await _agentService.GetAgentProfileByUserIdAsync(userId);
+            if (result == null)
+                return NotFound(ApiResponse<AgentProfileDto>.ErrorResponse("Broker profile not found"));
+
+            return Ok(ApiResponse<AgentProfileDto>.SuccessResponse(result));
+        }
+
         [HttpGet("{id}/services")]
         [Authorize]
         public async Task<ActionResult<ApiResponse<object>>> GetBrokerServices(int id)

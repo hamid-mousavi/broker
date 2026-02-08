@@ -14,6 +14,9 @@ namespace Broker.Services
         Task<List<VerificationRequestDto>> GetPendingVerificationsAsync();
         Task<bool> ApproveVerificationAsync(int verificationId, int adminUserId, ApproveVerificationDto approveDto);
         Task<bool> RejectVerificationAsync(int verificationId, int adminUserId, RejectVerificationDto rejectDto);
+        Task<List<AdminDocumentDto>> GetPendingDocumentsAsync();
+        Task<bool> ApproveDocumentAsync(int documentId);
+        Task<bool> RejectDocumentAsync(int documentId);
         Task<StatisticsOverviewDto> GetStatisticsOverviewAsync();
         Task<List<DailyStatisticsDto>> GetDailyStatisticsAsync(DateTime? startDate = null, DateTime? endDate = null);
         Task<RequestsReportDto> GetRequestsReportAsync(DateTime? startDate = null, DateTime? endDate = null);

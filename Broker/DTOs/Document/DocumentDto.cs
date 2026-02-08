@@ -13,6 +13,7 @@ namespace Broker.DTOs.Document
         public long FileSize { get; set; }
         public string? Description { get; set; }
         public bool IsVerified { get; set; }
+        public string Status { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
     }
 

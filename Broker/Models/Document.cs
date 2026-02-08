@@ -33,6 +33,9 @@ namespace Broker.Models
 
         public bool IsVerified { get; set; } = false;
 
+        [Required]
+        public DocumentVerificationStatus Status { get; set; } = DocumentVerificationStatus.Pending;
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public DateTime? UpdatedAt { get; set; }
@@ -40,6 +43,13 @@ namespace Broker.Models
         // Navigation Properties
         [ForeignKey("UserId")]
         public User User { get; set; } = null!;
+    }
+
+    public enum DocumentVerificationStatus
+    {
+        Pending = 1,
+        Approved = 2,
+        Rejected = 3
     }
 }
 

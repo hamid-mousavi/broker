@@ -55,6 +55,24 @@ namespace Broker.Services
                 };
                 _context.CargoOwners.Add(cargoOwner);
             }
+            else if (registerDto.Role == UserRole.ClearanceAgent)
+            {
+                var agent = new ClearanceAgent
+                {
+                    UserId = user.Id,
+                    CompanyName = $"{user.FirstName} {user.LastName}",
+                    City = null,
+                    Province = null,
+                    YearsOfExperience = 0,
+                    IsVerified = false,
+                    IsLegalEntity = registerDto.IsLegalEntity,
+                    NationalId = registerDto.NationalId,
+                    RegistrationNumber = registerDto.RegistrationNumber,
+                    EconomicCode = registerDto.EconomicCode,
+                    CreatedAt = DateTime.UtcNow
+                };
+                _context.ClearanceAgents.Add(agent);
+            }
 
             await _context.SaveChangesAsync();
 

@@ -28,6 +28,17 @@ namespace Broker.DTOs.Auth
 
         [Required]
         public UserRole Role { get; set; }
+
+        public bool IsLegalEntity { get; set; } = false;
+
+        [StringLength(20)]
+        public string? NationalId { get; set; }
+
+        [StringLength(50)]
+        public string? RegistrationNumber { get; set; }
+
+        [StringLength(50)]
+        public string? EconomicCode { get; set; }
     }
 }
 

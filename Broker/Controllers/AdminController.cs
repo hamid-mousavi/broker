@@ -197,6 +197,42 @@ namespace Broker.Controllers
             return Ok(ApiResponse<bool>.SuccessResponse(true, "مدارک رد شد"));
         }
 
+        [HttpGet("documents/pending")]
+        public async Task<ActionResult<ApiResponse<List<AdminDocumentDto>>>> GetPendingDocuments()
+        {
+            if (!IsAdmin())
+                return Forbid();
+
+            var result = await _adminService.GetPendingDocumentsAsync();
+            return Ok(ApiResponse<List<AdminDocumentDto>>.SuccessResponse(result));
+        }
+
+        [HttpPost("documents/{id}/approve")]
+        public async Task<ActionResult<ApiResponse<bool>>> ApproveDocument(int id)
+        {
+            if (!IsAdmin())
+                return Forbid();
+
+            var result = await _adminService.ApproveDocumentAsync(id);
+            if (!result)
+                return BadRequest(ApiResponse<bool>.ErrorResponse("تایید انجام نشد"));
+
+            return Ok(ApiResponse<bool>.SuccessResponse(true, "مدرک با موفقیت تایید شد"));
+        }
+
+        [HttpPost("documents/{id}/reject")]
+        public async Task<ActionResult<ApiResponse<bool>>> RejectDocument(int id)
+        {
+            if (!IsAdmin())
+                return Forbid();
+
+            var result = await _adminService.RejectDocumentAsync(id);
+            if (!result)
+                return BadRequest(ApiResponse<bool>.ErrorResponse("رد انجام نشد"));
+
+            return Ok(ApiResponse<bool>.SuccessResponse(true, "مدرک رد شد"));
+        }
+
         [HttpGet("statistics/overview")]
         public async Task<ActionResult<ApiResponse<StatisticsOverviewDto>>> GetStatisticsOverview()
         {

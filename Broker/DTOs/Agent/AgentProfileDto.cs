@@ -10,6 +10,8 @@ namespace Broker.DTOs.Agent
         public string? LicenseNumber { get; set; }
         public string? Description { get; set; }
         public string? Address { get; set; }
+        public string? PersonalAddress { get; set; }
+        public string? LegalAddress { get; set; }
         public string? City { get; set; }
         public string? Province { get; set; }
         public string? PostalCode { get; set; }
@@ -19,6 +21,10 @@ namespace Broker.DTOs.Agent
         public int TotalRatings { get; set; }
         public int CompletedRequests { get; set; }
         public bool IsVerified { get; set; }
+        public bool IsLegalEntity { get; set; }
+        public string? NationalId { get; set; }
+        public string? RegistrationNumber { get; set; }
+        public string? EconomicCode { get; set; }
         public List<string> Specializations { get; set; } = new();
         public DateTime CreatedAt { get; set; }
     }
@@ -37,6 +43,12 @@ namespace Broker.DTOs.Agent
 
         [StringLength(200)]
         public string? Address { get; set; }
+
+        [StringLength(200)]
+        public string? PersonalAddress { get; set; }
+
+        [StringLength(200)]
+        public string? LegalAddress { get; set; }
 
         [StringLength(50)]
         public string? City { get; set; }
@@ -71,6 +83,12 @@ namespace Broker.DTOs.Agent
         [StringLength(200)]
         public string? Address { get; set; }
 
+        [StringLength(200)]
+        public string? PersonalAddress { get; set; }
+
+        [StringLength(200)]
+        public string? LegalAddress { get; set; }
+
         [StringLength(50)]
         public string? City { get; set; }
 
@@ -86,6 +104,17 @@ namespace Broker.DTOs.Agent
 
         [Range(0, 50)]
         public int? YearsOfExperience { get; set; }
+
+        public bool? IsLegalEntity { get; set; }
+
+        [StringLength(20)]
+        public string? NationalId { get; set; }
+
+        [StringLength(50)]
+        public string? RegistrationNumber { get; set; }
+
+        [StringLength(50)]
+        public string? EconomicCode { get; set; }
 
         public List<string>? Specializations { get; set; }
     }

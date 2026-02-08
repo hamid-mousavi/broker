@@ -34,6 +34,7 @@ namespace Broker.Services
                 FileSize = d.FileSize,
                 Description = d.Description,
                 IsVerified = d.IsVerified,
+                Status = d.Status.ToString(),
                 CreatedAt = d.CreatedAt
             }).ToList();
         }
@@ -56,6 +57,7 @@ namespace Broker.Services
                 FileSize = document.FileSize,
                 Description = document.Description,
                 IsVerified = document.IsVerified,
+                Status = document.Status.ToString(),
                 CreatedAt = document.CreatedAt
             };
         }
@@ -86,6 +88,7 @@ namespace Broker.Services
                 FileSize = uploadDto.File.Length,
                 Description = uploadDto.Description,
                 IsVerified = false,
+                Status = Models.DocumentVerificationStatus.Pending,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -103,6 +106,7 @@ namespace Broker.Services
                 FileSize = document.FileSize,
                 Description = document.Description,
                 IsVerified = document.IsVerified,
+                Status = document.Status.ToString(),
                 CreatedAt = document.CreatedAt
             };
         }
