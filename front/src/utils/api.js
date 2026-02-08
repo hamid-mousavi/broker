@@ -1,8 +1,18 @@
-import axios from 'axios'
+import axios from "axios";
 
 const api = axios.create({
-  baseURL: '/api',
-  headers: { 'Content-Type': 'application/json' }
-})
+  baseURL: "http://localhost:5000/api", // پورت بک‌اندت
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
-export default api
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token") || localStorage.getItem("accessToken");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export default api;

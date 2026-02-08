@@ -1,5 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Star, MapPin, ArrowUpRight } from 'lucide-react'
 
 function Stars({ value, count }) {
   if (value == null) {
@@ -16,7 +17,8 @@ function Stars({ value, count }) {
     return '☆'
   })
   return (
-    <div className="text-amber-500 text-sm">
+    <div className="text-amber-500 text-sm flex items-center gap-2">
+      <Star size={14} />
       {stars.join(' ')} <span className="text-slate-500">({Number(value).toFixed(1)})</span>
     </div>
   )
@@ -26,7 +28,7 @@ export default function BrokerCard({ broker, view = 'grid', onRequest }) {
   const navigate = useNavigate()
   return (
     <div
-      className={`border rounded-xl bg-white shadow-sm p-4 ${
+      className={`card p-4 ${
         view === 'list' ? 'flex flex-col md:flex-row md:items-center md:gap-6' : ''
       }`}
     >
@@ -34,7 +36,9 @@ export default function BrokerCard({ broker, view = 'grid', onRequest }) {
         <div className="h-12 w-12 rounded-full bg-slate-200" />
         <div>
           <div className="font-semibold">{broker.name}</div>
-          <div className="text-xs text-slate-500">{broker.city} • {broker.experience} سال تجربه</div>
+          <div className="text-xs text-slate-500 flex items-center gap-1">
+            <MapPin size={12} /> {broker.city} • {broker.experience} سال تجربه
+          </div>
         </div>
       </div>
       <div className={`mt-3 ${view === 'list' ? 'md:mt-0 md:flex-1' : ''}`}>
@@ -54,16 +58,16 @@ export default function BrokerCard({ broker, view = 'grid', onRequest }) {
         </div>
         <div className="mt-3 flex gap-2">
           <button
-            className="px-3 py-2 rounded bg-slate-900 text-white text-sm"
+            className="px-3 py-2 rounded accent-btn text-sm flex items-center gap-2"
             onClick={() => onRequest && onRequest(broker)}
           >
             ارسال درخواست
           </button>
           <button
-            className="px-3 py-2 rounded border text-sm"
+            className="px-3 py-2 rounded border text-sm flex items-center gap-2"
             onClick={() => navigate(`/brokers/${broker.id}`)}
           >
-            جزئیات
+            جزئیات <ArrowUpRight size={14} />
           </button>
         </div>
       </div>

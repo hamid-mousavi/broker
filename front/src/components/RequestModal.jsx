@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { X, Send, Package, Globe, MapPin, DollarSign, Hash, Calendar as CalendarIcon } from 'lucide-react'
 import api from '../utils/api'
 
 export default function RequestModal({ onClose, brokerId, brokerName }) {
@@ -76,13 +77,15 @@ export default function RequestModal({ onClose, brokerId, brokerName }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="w-full max-w-2xl rounded bg-white p-6">
+      <div className="w-full max-w-2xl card p-6">
         <div className="flex items-center justify-between mb-4">
           <div>
             <div className="text-lg font-semibold">ارسال درخواست</div>
             {brokerName && <div className="text-xs text-slate-500">برای {brokerName}</div>}
           </div>
-          <button className="text-slate-500" onClick={onClose}>بستن</button>
+          <button className="text-slate-500" onClick={onClose} aria-label="close">
+            <X size={18} />
+          </button>
         </div>
 
         {!isLoggedIn && (
@@ -109,13 +112,16 @@ export default function RequestModal({ onClose, brokerId, brokerName }) {
         )}
 
         <form className="grid grid-cols-1 md:grid-cols-2 gap-3" onSubmit={handleSubmit}>
-          <input
-            className="px-3 py-2 rounded border md:col-span-2"
-            placeholder="عنوان درخواست"
-            value={form.title}
-            onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
-            required
-          />
+          <div className="relative md:col-span-2">
+            <Package size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              className="px-3 py-2 pr-9 rounded border w-full"
+              placeholder="عنوان درخواست"
+              value={form.title}
+              onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
+              required
+            />
+          </div>
           <textarea
             className="px-3 py-2 rounded border md:col-span-2"
             placeholder="توضیحات"
@@ -124,50 +130,68 @@ export default function RequestModal({ onClose, brokerId, brokerName }) {
             onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
             required
           />
-          <input
-            className="px-3 py-2 rounded border"
-            placeholder="نوع کالا"
-            value={form.cargoType}
-            onChange={(e) => setForm((p) => ({ ...p, cargoType: e.target.value }))}
-          />
-          <input
-            className="px-3 py-2 rounded border"
-            placeholder="کشور مبدا"
-            value={form.originCountry}
-            onChange={(e) => setForm((p) => ({ ...p, originCountry: e.target.value }))}
-          />
-          <input
-            className="px-3 py-2 rounded border"
-            placeholder="بندر مقصد"
-            value={form.destinationPort}
-            onChange={(e) => setForm((p) => ({ ...p, destinationPort: e.target.value }))}
-          />
-          <input
-            className="px-3 py-2 rounded border"
-            placeholder="ارزش تقریبی"
-            type="number"
-            value={form.estimatedValue}
-            onChange={(e) => setForm((p) => ({ ...p, estimatedValue: e.target.value }))}
-          />
-          <input
-            className="px-3 py-2 rounded border"
-            placeholder="کد گمرکی"
-            value={form.customsCode}
-            onChange={(e) => setForm((p) => ({ ...p, customsCode: e.target.value }))}
-          />
-          <input
-            className="px-3 py-2 rounded border"
-            type="date"
-            value={form.deadline}
-            onChange={(e) => setForm((p) => ({ ...p, deadline: e.target.value }))}
-          />
+          <div className="relative">
+            <Package size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              className="px-3 py-2 pr-9 rounded border w-full"
+              placeholder="نوع کالا"
+              value={form.cargoType}
+              onChange={(e) => setForm((p) => ({ ...p, cargoType: e.target.value }))}
+            />
+          </div>
+          <div className="relative">
+            <Globe size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              className="px-3 py-2 pr-9 rounded border w-full"
+              placeholder="کشور مبدا"
+              value={form.originCountry}
+              onChange={(e) => setForm((p) => ({ ...p, originCountry: e.target.value }))}
+            />
+          </div>
+          <div className="relative">
+            <MapPin size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              className="px-3 py-2 pr-9 rounded border w-full"
+              placeholder="بندر مقصد"
+              value={form.destinationPort}
+              onChange={(e) => setForm((p) => ({ ...p, destinationPort: e.target.value }))}
+            />
+          </div>
+          <div className="relative">
+            <DollarSign size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              className="px-3 py-2 pr-9 rounded border w-full"
+              placeholder="ارزش تقریبی"
+              type="number"
+              value={form.estimatedValue}
+              onChange={(e) => setForm((p) => ({ ...p, estimatedValue: e.target.value }))}
+            />
+          </div>
+          <div className="relative">
+            <Hash size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              className="px-3 py-2 pr-9 rounded border w-full"
+              placeholder="کد گمرکی"
+              value={form.customsCode}
+              onChange={(e) => setForm((p) => ({ ...p, customsCode: e.target.value }))}
+            />
+          </div>
+          <div className="relative">
+            <CalendarIcon size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              className="px-3 py-2 pr-9 rounded border w-full"
+              type="date"
+              value={form.deadline}
+              onChange={(e) => setForm((p) => ({ ...p, deadline: e.target.value }))}
+            />
+          </div>
 
           <div className="md:col-span-2 flex items-center justify-end gap-2">
             <button type="button" className="px-3 py-2 rounded border" onClick={onClose}>
               انصراف
             </button>
-            <button type="submit" className="px-3 py-2 rounded bg-slate-900 text-white" disabled={saving}>
-              {saving ? 'در حال ارسال...' : 'ثبت درخواست'}
+            <button type="submit" className="px-3 py-2 rounded accent-btn flex items-center gap-2" disabled={saving}>
+              <Send size={16} /> {saving ? 'در حال ارسال...' : 'ثبت درخواست'}
             </button>
           </div>
         </form>

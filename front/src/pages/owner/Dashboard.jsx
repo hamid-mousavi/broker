@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { ClipboardList, Clock, Heart, ArrowUpRight } from 'lucide-react'
 import api from '../../utils/api'
 
 export default function OwnerDashboard() {
@@ -27,21 +28,29 @@ export default function OwnerDashboard() {
       {!loading && (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-white border rounded p-4">
-              <div className="text-sm text-slate-500">کل درخواست‌ها</div>
+            <div className="card p-4">
+              <div className="text-sm text-slate-500 flex items-center gap-2">
+                <ClipboardList size={16} /> کل درخواست‌ها
+              </div>
               <div className="text-xl font-semibold">{summary?.totalRequests || 0}</div>
             </div>
-            <div className="bg-white border rounded p-4">
-              <div className="text-sm text-slate-500">در انتظار</div>
+            <div className="card p-4">
+              <div className="text-sm text-slate-500 flex items-center gap-2">
+                <Clock size={16} /> در انتظار
+              </div>
               <div className="text-xl font-semibold">{summary?.pendingRequests || 0}</div>
             </div>
-            <div className="bg-white border rounded p-4">
-              <div className="text-sm text-slate-500">ذخیره‌شده‌ها</div>
+            <div className="card p-4">
+              <div className="text-sm text-slate-500 flex items-center gap-2">
+                <Heart size={16} /> ذخیره‌شده‌ها
+              </div>
               <div className="text-xl font-semibold">{summary?.favoritesCount || 0}</div>
             </div>
           </div>
-          <div className="bg-white border rounded p-4">
-            <div className="font-semibold mb-2">دسترسی سریع</div>
+          <div className="card p-4">
+            <div className="font-semibold mb-2 flex items-center gap-2">
+              <ArrowUpRight size={16} /> دسترسی سریع
+            </div>
             <div className="flex flex-wrap gap-2 text-sm">
               <Link className="px-3 py-2 rounded border" to="/dashboard/owner/requests">
                 پیگیری درخواست‌ها

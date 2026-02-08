@@ -22,7 +22,7 @@ export default function AdvancedSearchFilters({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border bg-white p-4">
+      <div className="card p-4">
         <div className="text-sm font-semibold mb-2">منطقه</div>
         <div className="space-y-2">
           <select
@@ -48,7 +48,7 @@ export default function AdvancedSearchFilters({
         </div>
       </div>
 
-      <details className="rounded-xl border bg-white p-4" open>
+      <details className="card p-4" open>
         <summary className="cursor-pointer text-sm font-semibold">تخصص‌ها</summary>
         <div className="mt-3 space-y-2">
           {SPECIALTIES.map((item) => (
@@ -64,7 +64,7 @@ export default function AdvancedSearchFilters({
         </div>
       </details>
 
-      <details className="rounded-xl border bg-white p-4" open>
+      <details className="card p-4" open>
         <summary className="cursor-pointer text-sm font-semibold">امتیاز</summary>
         <div className="mt-3">
           <input
@@ -80,7 +80,7 @@ export default function AdvancedSearchFilters({
         </div>
       </details>
 
-      <details className="rounded-xl border bg-white p-4" open>
+      <details className="card p-4" open>
         <summary className="cursor-pointer text-sm font-semibold">قیمت</summary>
         <div className="mt-3 space-y-2">
           <input
@@ -96,7 +96,7 @@ export default function AdvancedSearchFilters({
         </div>
       </details>
 
-      <div className="rounded-xl border bg-white p-4">
+      <div className="card p-4">
         <div className="text-sm font-semibold mb-2">نوع خدمات</div>
         <div className="space-y-2">
           {SERVICE_TYPES.map((item) => (
@@ -118,7 +118,7 @@ export default function AdvancedSearchFilters({
       </div>
 
       <div className="flex gap-2">
-        <button onClick={onSave} className="flex-1 px-3 py-2 rounded bg-slate-900 text-white text-sm">ذخیره فیلترها</button>
+        <button onClick={onSave} className="flex-1 px-3 py-2 rounded accent-btn text-sm">ذخیره فیلترها</button>
         <button onClick={onReset} className="flex-1 px-3 py-2 rounded border text-sm">بازنشانی</button>
       </div>
     </div>

@@ -1,9 +1,12 @@
 import React from 'react'
 
-export default function StatsCard({title, value, children}){
+export default function StatsCard({ title, value, icon: Icon, children }) {
   return (
-    <div className="bg-white dark:bg-slate-800 p-4 rounded shadow-sm">
-      <div className="text-sm text-slate-500 dark:text-slate-300">{title}</div>
+    <div className="card p-4">
+      <div className="text-sm text-slate-500 flex items-center gap-2">
+        {Icon && <Icon size={16} />}
+        {title}
+      </div>
       <div className="mt-2 text-2xl font-bold">{value}</div>
       {children}
     </div>

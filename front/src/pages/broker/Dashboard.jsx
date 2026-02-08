@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Wallet, ClipboardList, Star, ArrowUpRight, BarChart3, Calendar } from 'lucide-react'
 import api from '../../utils/api'
 
 export default function BrokerDashboard() {
@@ -47,26 +48,34 @@ export default function BrokerDashboard() {
       {!loading && (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-white border rounded p-4">
-              <div className="text-sm text-slate-500">درآمد ماه</div>
+            <div className="card p-4">
+              <div className="text-sm text-slate-500 flex items-center gap-2">
+                <Wallet size={16} /> درآمد ماه
+              </div>
               <div className="text-xl font-semibold">{summary?.monthlyIncome || 0} تومان</div>
             </div>
-            <div className="bg-white border rounded p-4">
-              <div className="text-sm text-slate-500">درخواست‌های جدید</div>
+            <div className="card p-4">
+              <div className="text-sm text-slate-500 flex items-center gap-2">
+                <ClipboardList size={16} /> درخواست‌های جدید
+              </div>
               <div className="text-xl font-semibold">{summary?.newRequests || 0}</div>
             </div>
-            <div className="bg-white border rounded p-4">
-              <div className="text-sm text-slate-500">امتیاز میانگین</div>
+            <div className="card p-4">
+              <div className="text-sm text-slate-500 flex items-center gap-2">
+                <Star size={16} /> امتیاز میانگین
+              </div>
               <div className="text-xl font-semibold">{summary?.rating || 0}</div>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-4">
-            <div className="bg-white border rounded p-4">
+            <div className="card p-4">
               <div className="flex items-center justify-between mb-3">
-                <div className="font-semibold">درخواست‌های جدید</div>
+                <div className="font-semibold flex items-center gap-2">
+                  <ClipboardList size={16} /> درخواست‌های جدید
+                </div>
                 <Link className="text-sm text-slate-500" to="/dashboard/broker/requests">
-                  مشاهده همه
+                  مشاهده همه <ArrowUpRight size={14} className="inline-block" />
                 </Link>
               </div>
               <div className="space-y-2 text-sm">
@@ -88,14 +97,18 @@ export default function BrokerDashboard() {
             </div>
 
             <div className="space-y-4">
-              <div className="bg-white border rounded p-4">
-                <div className="font-semibold mb-3">نمودار پیشرفت</div>
+              <div className="card p-4">
+                <div className="font-semibold mb-3 flex items-center gap-2">
+                  <BarChart3 size={16} /> نمودار پیشرفت
+                </div>
                 <div className="h-36 rounded bg-slate-100 flex items-center justify-center text-slate-500 text-sm">
                   {analytics ? 'نمودار داده‌ها' : 'نمودار (Placeholder)'}
                 </div>
               </div>
-              <div className="bg-white border rounded p-4">
-                <div className="font-semibold mb-3">دسترسی سریع</div>
+              <div className="card p-4">
+                <div className="font-semibold mb-3 flex items-center gap-2">
+                  <Calendar size={16} /> دسترسی سریع
+                </div>
                 <div className="flex flex-wrap gap-2">
                   {quickActions.map((item) => (
                     <Link key={item.to} to={item.to} className="px-3 py-2 rounded border text-sm">

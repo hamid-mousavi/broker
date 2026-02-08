@@ -1,0 +1,33 @@
+# Build outputs
+**/bin/
+**/obj/
+**/dist/
+**/build/
+
+# Logs
+*.log
+
+# Node
+**/node_modules/
+**/.npm/
+**/.pnpm-store/
+
+# Env files
+.env
+.env.*
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Coverage
+**/coverage/
+
+# Misc
+.sass-cache/

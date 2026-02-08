@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react'
+import { Search, SlidersHorizontal, LayoutGrid, List, MapPin } from 'lucide-react'
 import BrokerCard from '../components/BrokerCard'
 import AdvancedSearchFilters from '../components/AdvancedSearchFilters'
 import RequestModal from '../components/RequestModal'
@@ -102,43 +103,54 @@ export default function SearchBrokers() {
   return (
     <PublicLayout>
       <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        <div className="flex flex-col gap-4 mb-6">
           <div>
             <h1 className="text-2xl font-semibold">جستجوی ترخیص‌کار</h1>
-            <p className="text-sm text-slate-500">نتایج بر اساس فیلترهای انتخابی نمایش داده می‌شوند.</p>
+            <p className="text-sm text-slate-500">
+              نتایج بر اساس فیلترهای انتخابی نمایش داده می‌شوند.
+            </p>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <input
-              className="px-3 py-2 rounded border bg-white"
-              placeholder="جستجو نام، تخصص یا شهر"
-              value={searchTerm}
-              onChange={(event) => {
-                setSearchTerm(event.target.value)
-                setPageNumber(1)
-              }}
-            />
-            <select
-              className="px-3 py-2 rounded border bg-white"
-              value={sortBy}
-              onChange={(event) => setSortBy(event.target.value)}
-            >
-              <option value="rating">مرتب‌سازی: امتیاز</option>
-              <option value="experience">مرتب‌سازی: تجربه</option>
-              <option value="price">مرتب‌سازی: قیمت</option>
-            </select>
-            <div className="flex gap-2">
-              <button
-                className={`px-3 py-2 rounded border ${view === 'grid' ? 'bg-slate-900 text-white' : ''}`}
-                onClick={() => setView('grid')}
+
+          <div className="flex flex-col lg:flex-row lg:items-center gap-2">
+            <div className="relative flex-1">
+              <Search size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                className="w-full px-3 py-2 pr-9 rounded border bg-white"
+                placeholder="جستجو نام، تخصص یا شهر"
+                value={searchTerm}
+                onChange={(event) => {
+                  setSearchTerm(event.target.value)
+                  setPageNumber(1)
+                }}
+              />
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex items-center gap-2 text-sm text-slate-500">
+                <SlidersHorizontal size={16} /> مرتب‌سازی
+              </div>
+              <select
+                className="px-3 py-2 rounded border bg-white"
+                value={sortBy}
+                onChange={(event) => setSortBy(event.target.value)}
               >
-                گرید
-              </button>
-              <button
-                className={`px-3 py-2 rounded border ${view === 'list' ? 'bg-slate-900 text-white' : ''}`}
-                onClick={() => setView('list')}
-              >
-                لیست
-              </button>
+                <option value="rating">امتیاز</option>
+                <option value="experience">تجربه</option>
+                <option value="price">قیمت</option>
+              </select>
+              <div className="flex gap-2">
+                <button
+                  className={`px-3 py-2 rounded border flex items-center gap-2 ${view === 'grid' ? 'bg-slate-900 text-white' : ''}`}
+                  onClick={() => setView('grid')}
+                >
+                  <LayoutGrid size={16} /> گرید
+                </button>
+                <button
+                  className={`px-3 py-2 rounded border flex items-center gap-2 ${view === 'list' ? 'bg-slate-900 text-white' : ''}`}
+                  onClick={() => setView('list')}
+                >
+                  <List size={16} /> لیست
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -154,8 +166,10 @@ export default function SearchBrokers() {
           </aside>
 
           <section className="space-y-4">
-            <div className="rounded-xl border bg-white p-4">
-              <div className="text-sm font-semibold mb-2">نقشه موقعیت‌ها</div>
+            <div className="card p-4">
+              <div className="text-sm font-semibold mb-2 flex items-center gap-2">
+                <MapPin size={16} /> نقشه موقعیت‌ها
+              </div>
               <div className="h-48 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 text-sm">
                 نقشه گوگل (Placeholder)
               </div>

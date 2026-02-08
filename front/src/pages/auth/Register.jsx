@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { User, Mail, Phone, Lock, UserPlus, Building2, BadgeCheck } from 'lucide-react'
 import api from '../../utils/api'
 
 const ROLE_OPTIONS = [
@@ -51,13 +52,7 @@ export default function Register() {
       }
       setSuccess('ثبت‌نام انجام شد. در حال انتقال...')
       setTimeout(() => {
-        if (payload.userInfo?.role === 'Admin') {
-          navigate('/dashboard/admin', { replace: true })
-        } else if (payload.userInfo?.role === 'ClearanceAgent') {
-          navigate('/dashboard/broker', { replace: true })
-        } else {
-          navigate('/dashboard/owner', { replace: true })
-        }
+        navigate('/', { replace: true })
       }, 600)
     } catch (err) {
       setError(getErrorMessage(err, 'خطا در ثبت‌نام'))
@@ -67,8 +62,8 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 p-4">
-      <div className="w-full max-w-xl bg-white dark:bg-slate-800 rounded p-6 shadow">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-900 p-4">
+      <div className="w-full max-w-xl card p-6">
         <h1 className="text-xl font-semibold mb-4">ثبت‌نام</h1>
         {error && (
           <div className="mb-3 rounded border border-rose-200 bg-rose-50 text-rose-700 px-3 py-2 text-sm">
@@ -82,63 +77,78 @@ export default function Register() {
         )}
         <form className="space-y-3" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="relative">
+              <User size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                className="px-3 py-2 pr-9 rounded border bg-white w-full"
+                placeholder="نام"
+                value={form.firstName}
+                onChange={(event) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    firstName: event.target.value,
+                  }))
+                }
+                required
+              />
+            </div>
+            <div className="relative">
+              <User size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                className="px-3 py-2 pr-9 rounded border bg-white w-full"
+                placeholder="نام خانوادگی"
+                value={form.lastName}
+                onChange={(event) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    lastName: event.target.value,
+                  }))
+                }
+                required
+              />
+            </div>
+          </div>
+          <div className="relative">
+            <Mail size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
-              className="px-3 py-2 rounded border bg-white dark:bg-slate-900"
-              placeholder="نام"
-              value={form.firstName}
+              className="w-full px-3 py-2 pr-9 rounded border bg-white"
+              placeholder="ایمیل"
+              type="email"
+              value={form.email}
               onChange={(event) =>
-                setForm((prev) => ({
-                  ...prev,
-                  firstName: event.target.value,
-                }))
-              }
-              required
-            />
-            <input
-              className="px-3 py-2 rounded border bg-white dark:bg-slate-900"
-              placeholder="نام خانوادگی"
-              value={form.lastName}
-              onChange={(event) =>
-                setForm((prev) => ({
-                  ...prev,
-                  lastName: event.target.value,
-                }))
+                setForm((prev) => ({ ...prev, email: event.target.value }))
               }
               required
             />
           </div>
-          <input
-            className="w-full px-3 py-2 rounded border bg-white dark:bg-slate-900"
-            placeholder="ایمیل"
-            type="email"
-            value={form.email}
-            onChange={(event) =>
-              setForm((prev) => ({ ...prev, email: event.target.value }))
-            }
-            required
-          />
-          <input
-            className="w-full px-3 py-2 rounded border bg-white dark:bg-slate-900"
-            placeholder="شماره موبایل"
-            value={form.phoneNumber}
-            onChange={(event) =>
-              setForm((prev) => ({ ...prev, phoneNumber: event.target.value }))
-            }
-            required
-          />
-          <input
-            className="w-full px-3 py-2 rounded border bg-white dark:bg-slate-900"
-            placeholder="رمز عبور"
-            type="password"
-            value={form.password}
-            onChange={(event) =>
-              setForm((prev) => ({ ...prev, password: event.target.value }))
-            }
-            minLength={6}
-            required
-          />
+          <div className="relative">
+            <Phone size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              className="w-full px-3 py-2 pr-9 rounded border bg-white"
+              placeholder="شماره موبایل"
+              value={form.phoneNumber}
+              onChange={(event) =>
+                setForm((prev) => ({ ...prev, phoneNumber: event.target.value }))
+              }
+              required
+            />
+          </div>
+          <div className="relative">
+            <Lock size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              className="w-full px-3 py-2 pr-9 rounded border bg-white"
+              placeholder="رمز عبور"
+              type="password"
+              value={form.password}
+              onChange={(event) =>
+                setForm((prev) => ({ ...prev, password: event.target.value }))
+              }
+              minLength={6}
+              required
+            />
+          </div>
           <select
-            className="w-full px-3 py-2 rounded border bg-white dark:bg-slate-900"
+            className="w-full px-3 py-2 rounded border bg-white"
             value={form.role}
             onChange={(event) =>
               setForm((prev) => {
@@ -165,7 +175,7 @@ export default function Register() {
             ))}
           </select>
           {form.role === 1 && (
-            <div className="rounded border bg-slate-50 dark:bg-slate-900/50 p-4 space-y-3">
+            <div className="rounded border bg-slate-50 p-4 space-y-3">
               <div className="flex items-center gap-2 text-sm">
                 <input
                   id="isLegalEntity"
@@ -185,50 +195,59 @@ export default function Register() {
               </div>
 
               {!form.isLegalEntity && (
-                <input
-                  className="w-full px-3 py-2 rounded border bg-white dark:bg-slate-900"
-                  placeholder="کد ملی (حقیقی)"
-                  value={form.nationalId}
-                  onChange={(event) =>
-                    setForm((prev) => ({ ...prev, nationalId: event.target.value }))
-                  }
-                />
+                <div className="relative">
+                  <BadgeCheck size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    className="w-full px-3 py-2 pr-9 rounded border bg-white"
+                    placeholder="کد ملی (حقیقی)"
+                    value={form.nationalId}
+                    onChange={(event) =>
+                      setForm((prev) => ({ ...prev, nationalId: event.target.value }))
+                    }
+                  />
+                </div>
               )}
 
               {form.isLegalEntity && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <input
-                    className="px-3 py-2 rounded border bg-white dark:bg-slate-900"
-                    placeholder="شماره ثبت"
-                    value={form.registrationNumber}
-                    onChange={(event) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        registrationNumber: event.target.value,
-                      }))
-                    }
-                  />
-                  <input
-                    className="px-3 py-2 rounded border bg-white dark:bg-slate-900"
-                    placeholder="کد اقتصادی"
-                    value={form.economicCode}
-                    onChange={(event) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        economicCode: event.target.value,
-                      }))
-                    }
-                  />
+                  <div className="relative">
+                    <Building2 size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input
+                      className="px-3 py-2 pr-9 rounded border bg-white w-full"
+                      placeholder="شماره ثبت"
+                      value={form.registrationNumber}
+                      onChange={(event) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          registrationNumber: event.target.value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="relative">
+                    <Building2 size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input
+                      className="px-3 py-2 pr-9 rounded border bg-white w-full"
+                      placeholder="کد اقتصادی"
+                      value={form.economicCode}
+                      onChange={(event) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          economicCode: event.target.value,
+                        }))
+                      }
+                    />
+                  </div>
                 </div>
               )}
             </div>
           )}
           <button
             type="submit"
-            className="w-full px-3 py-2 rounded bg-slate-900 text-white dark:bg-slate-200 dark:text-slate-900"
+            className="w-full px-3 py-2 rounded accent-btn flex items-center justify-center gap-2"
             disabled={loading}
           >
-            {loading ? 'در حال ثبت‌نام...' : 'ثبت‌نام'}
+            <UserPlus size={16} /> {loading ? 'در حال ثبت‌نام...' : 'ثبت‌نام'}
           </button>
         </form>
         <div className="mt-4 text-sm text-slate-500">
