@@ -6,21 +6,31 @@ export default function OwnerRequests() {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [status, setStatus] = useState('')
+  const [refreshing, setRefreshing] = useState(false)
+
+  const load = async (silent = false) => {
+    if (!silent) setLoading(true)
+    setRefreshing(true)
+    try {
+      const res = await api.get('/cargo-owners/requests', {
+        params: { pageNumber: 1, pageSize: 20, status: status || undefined },
+      })
+      setData(res?.data?.data || null)
+    } catch (err) {
+      if (!silent) setData(null)
+    } finally {
+      setLoading(false)
+      setRefreshing(false)
+    }
+  }
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await api.get('/cargo-owners/requests', {
-          params: { pageNumber: 1, pageSize: 20, status: status || undefined },
-        })
-        setData(res?.data?.data || null)
-      } catch (err) {
-        setData(null)
-      } finally {
-        setLoading(false)
-      }
-    }
     load()
+  }, [status])
+
+  useEffect(() => {
+    const interval = setInterval(() => load(true), 15000)
+    return () => clearInterval(interval)
   }, [status])
 
   const items = data?.requests || data?.items || []
@@ -39,12 +49,20 @@ export default function OwnerRequests() {
             onChange={(event) => setStatus(event.target.value)}
           >
             <option value="">همه وضعیت‌ها</option>
-            <option value="0">در انتظار</option>
-            <option value="1">در حال انجام</option>
-            <option value="2">تکمیل شده</option>
-            <option value="3">لغو شده</option>
-            <option value="4">رد شده</option>
+            <option value="1">در انتظار</option>
+            <option value="2">در حال انجام</option>
+            <option value="3">تکمیل شده</option>
+            <option value="4">لغو شده</option>
+            <option value="5">رد شده</option>
           </select>
+          <button
+            type="button"
+            className="px-3 py-2 rounded border text-sm"
+            onClick={() => load(true)}
+            disabled={refreshing}
+          >
+            {refreshing ? 'در حال بروزرسانی...' : 'بروزرسانی'}
+          </button>
         </div>
       </div>
       {loading && <div className="text-sm text-slate-500">در حال بارگذاری...</div>}
@@ -58,9 +76,14 @@ export default function OwnerRequests() {
                   <Calendar size={12} />
                   {req.createdAt ? new Date(req.createdAt).toLocaleDateString('fa-IR') : '-'}
                 </div>
+                {req.updatedAt && (
+                  <div className="mt-1 text-xs text-slate-400">
+                    آخرین بروزرسانی: {new Date(req.updatedAt).toLocaleDateString('fa-IR')}
+                  </div>
+                )}
                 <div className="mt-2">
                   <span className="inline-flex items-center rounded-full px-2 py-1 text-xs bg-slate-100 text-slate-700">
-                    {req.status || '-'}
+                    {req.statusName || req.status || '-'}
                   </span>
                 </div>
               </div>
@@ -84,7 +107,7 @@ export default function OwnerRequests() {
                     <td className="p-2">{req.title || '-'}</td>
                     <td className="p-2">
                       <span className="inline-flex items-center rounded-full px-2 py-1 text-xs bg-slate-100 text-slate-700">
-                        {req.status || '-'}
+                        {req.statusName || req.status || '-'}
                       </span>
                     </td>
                     <td className="p-2">
@@ -92,6 +115,11 @@ export default function OwnerRequests() {
                         <Calendar size={12} />
                         {req.createdAt ? new Date(req.createdAt).toLocaleDateString('fa-IR') : '-'}
                       </span>
+                      {req.updatedAt && (
+                        <div className="text-xs text-slate-400 mt-1">
+                          آخرین بروزرسانی: {new Date(req.updatedAt).toLocaleDateString('fa-IR')}
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))}

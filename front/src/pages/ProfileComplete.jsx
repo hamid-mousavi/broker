@@ -40,7 +40,8 @@ const emptyBroker = {
   postalCode: '',
   website: '',
   yearsOfExperience: 0,
-  specializations: '',
+  specializations: [],
+  otherSpecialization: '',
   description: '',
   isLegalEntity: false,
   nationalId: '',
@@ -114,6 +115,11 @@ export default function ProfileComplete() {
 
           const data = agentRes?.data?.data
           if (data) {
+            const specs = data.specializations || []
+            const otherSpec = specs.find((s) => s.startsWith('سایر:'))
+            const normalizedSpecs = Array.from(
+              new Set(specs.map((s) => (s.startsWith('سایر:') ? 'سایر' : s)))
+            )
             setBrokerForm({
               companyName: data.companyName || '',
               licenseNumber: data.licenseNumber || '',
@@ -125,7 +131,8 @@ export default function ProfileComplete() {
               postalCode: data.postalCode || '',
               website: data.website || '',
               yearsOfExperience: data.yearsOfExperience || 0,
-              specializations: (data.specializations || []).join(', '),
+              specializations: normalizedSpecs,
+              otherSpecialization: otherSpec ? otherSpec.replace('سایر:', '').trim() : '',
               description: data.description || '',
               isLegalEntity: data.isLegalEntity || false,
               nationalId: data.nationalId || '',
@@ -266,9 +273,14 @@ export default function ProfileComplete() {
         nationalId: brokerForm.isLegalEntity ? null : brokerForm.nationalId || null,
         registrationNumber: brokerForm.isLegalEntity ? brokerForm.registrationNumber || null : null,
         economicCode: brokerForm.isLegalEntity ? brokerForm.economicCode || null : null,
-        specializations: brokerForm.specializations
-          ? brokerForm.specializations.split(',').map((s) => s.trim()).filter(Boolean)
-          : [],
+        specializations:
+          brokerForm.otherSpecialization && brokerForm.specializations.includes('سایر')
+            ? [
+                ...brokerForm.specializations.filter((s) => s !== 'سایر'),
+                'سایر',
+                `سایر: ${brokerForm.otherSpecialization}`,
+              ]
+            : brokerForm.specializations,
       }
       const res = await api.put('/brokers/profile', payload)
       if (!res?.data?.success) {
@@ -550,14 +562,44 @@ export default function ProfileComplete() {
                       }))
                     }
                   /> */}
-                  <input
-                    className="w-full px-3 py-2 rounded border"
-                    placeholder="تخصص‌ها (با کاما جدا کنید)"
-                    value={brokerForm.specializations}
-                    onChange={(event) =>
-                      setBrokerForm((prev) => ({ ...prev, specializations: event.target.value }))
-                    }
-                  />
+                  <div className="card p-4 space-y-2">
+                    <div className="text-sm font-semibold">تخصص‌ها</div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                      {[
+                        'واردات',
+                        'صادرات',
+                        'ترانزیت',
+                        'کالای ملوانی',
+                        'سایر',
+                      ].map((item) => (
+                        <label key={item} className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={brokerForm.specializations.includes(item)}
+                            onChange={() =>
+                              setBrokerForm((prev) => {
+                                const next = prev.specializations.includes(item)
+                                  ? prev.specializations.filter((s) => s !== item)
+                                  : [...prev.specializations, item]
+                                return { ...prev, specializations: next }
+                              })
+                            }
+                          />
+                          {item}
+                        </label>
+                      ))}
+                    </div>
+                    {brokerForm.specializations.includes('سایر') && (
+                      <input
+                        className="w-full px-3 py-2 rounded border"
+                        placeholder="توضیحات سایر تخصص‌ها"
+                        value={brokerForm.otherSpecialization}
+                        onChange={(event) =>
+                          setBrokerForm((prev) => ({ ...prev, otherSpecialization: event.target.value }))
+                        }
+                      />
+                    )}
+                  </div>
                   <button
                     type="submit"
                     className="px-4 py-2 rounded accent-btn"

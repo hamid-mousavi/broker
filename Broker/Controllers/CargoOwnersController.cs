@@ -110,8 +110,19 @@ namespace Broker.Controllers
             [FromQuery] int pageSize = 10)
         {
             var userId = User.GetUserId();
-            Models.RequestStatus? requestStatus = status.HasValue ? (Models.RequestStatus?)status.Value : null;
-            var result = await _requestService.GetMyRequestsAsync(userId, requestStatus, pageNumber, pageSize);
+            var cargoOwner = await _context.CargoOwners.FirstOrDefaultAsync(co => co.UserId == userId);
+            if (cargoOwner == null)
+                return NotFound(ApiResponse<RequestListResponseDto>.ErrorResponse("پروفایل صاحب کالا یافت نشد"));
+
+            var searchDto = new RequestSearchDto
+            {
+                Status = status.HasValue ? (Models.RequestStatus?)status.Value : null,
+                CargoOwnerId = cargoOwner.Id,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+
+            var result = await _requestService.GetRequestsAsync(searchDto);
             return Ok(ApiResponse<RequestListResponseDto>.SuccessResponse(result));
         }
 

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 
 const PROVINCES = ['تهران', 'هرمزگان', 'سیستان و بلوچستان', 'خراسان رضوی', 'اصفهان']
 const CITIES = ['تهران', 'بندرعباس', 'چابهار', 'مشهد', 'اصفهان']
-const SPECIALTIES = ['واردات', 'صادرات', 'ترانزیت', 'کالاهای صنعتی', 'مواد غذایی', 'کالاهای حجیم']
+const SPECIALTIES = ['واردات', 'صادرات', 'ترانزیت', 'کالای ملوانی', 'سایر']
 const SERVICE_TYPES = ['ترخیص کامل', 'مشاوره', 'ترانزیت', 'ترخیص فوری']
 
 export default function AdvancedSearchFilters({

@@ -168,6 +168,9 @@ namespace Broker.Services
                 .Include(a => a.Specializations)
                 .AsQueryable();
 
+            // Only active users should be visible in public lists
+            query = query.Where(a => a.User.IsActive);
+
             // Apply filters
             if (!string.IsNullOrWhiteSpace(searchDto.City))
                 query = query.Where(a => a.City != null && a.City.Contains(searchDto.City));
@@ -186,6 +189,8 @@ namespace Broker.Services
 
             if (searchDto.IsVerified.HasValue)
                 query = query.Where(a => a.IsVerified == searchDto.IsVerified.Value);
+            else
+                query = query.Where(a => a.IsVerified);
 
             if (!string.IsNullOrWhiteSpace(searchDto.SearchTerm))
             {
@@ -206,11 +211,24 @@ namespace Broker.Services
                 .Take(searchDto.PageSize)
                 .ToListAsync();
 
+            var userIds = agents.Select(a => a.UserId).ToList();
+            var verifiedDocUserIds = await _context.Documents
+                .Where(d => userIds.Contains(d.UserId) && d.Status == Models.DocumentVerificationStatus.Approved)
+                .Select(d => d.UserId)
+                .Distinct()
+                .ToListAsync();
+            var verifiedDocSet = verifiedDocUserIds.ToHashSet();
+
             var totalPages = (int)Math.Ceiling(totalCount / (double)searchDto.PageSize);
 
             return new AgentListResponseDto
             {
-                Agents = agents.Select(MapToDto).ToList(),
+                Agents = agents.Select(a =>
+                {
+                    var dto = MapToDto(a);
+                    dto.HasVerifiedDocuments = verifiedDocSet.Contains(a.UserId);
+                    return dto;
+                }).ToList(),
                 TotalCount = totalCount,
                 PageNumber = searchDto.PageNumber,
                 PageSize = searchDto.PageSize,
@@ -264,6 +282,8 @@ namespace Broker.Services
                 NationalId = agent.NationalId,
                 RegistrationNumber = agent.RegistrationNumber,
                 EconomicCode = agent.EconomicCode,
+                PhoneNumber = agent.User?.PhoneNumber,
+                HasVerifiedDocuments = false,
                 Specializations = agent.Specializations.Select(s => s.SpecializationName).ToList(),
                 CreatedAt = agent.CreatedAt
             };

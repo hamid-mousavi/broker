@@ -4,6 +4,7 @@ using Broker.Helpers;
 using Broker.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Broker.Controllers
 {
@@ -12,10 +13,12 @@ namespace Broker.Controllers
     public class BrokersController : ControllerBase
     {
         private readonly IAgentService _agentService;
+        private readonly Broker.Data.ApplicationDbContext _context;
 
-        public BrokersController(IAgentService agentService)
+        public BrokersController(IAgentService agentService, Broker.Data.ApplicationDbContext context)
         {
             _agentService = agentService;
+            _context = context;
         }
 
         [HttpGet]
@@ -100,6 +103,30 @@ namespace Broker.Controllers
             var ratingService = HttpContext.RequestServices.GetRequiredService<IRatingService>();
             var summary = await ratingService.GetRatingSummaryAsync(id);
             return Ok(ApiResponse<object>.SuccessResponse(summary));
+        }
+
+        [HttpGet("{id}/documents")]
+        public async Task<ActionResult<ApiResponse<List<Broker.DTOs.Document.PublicDocumentDto>>>> GetBrokerDocuments(int id)
+        {
+            var agent = await _context.ClearanceAgents.FirstOrDefaultAsync(a => a.Id == id);
+            if (agent == null)
+                return NotFound(ApiResponse<List<Broker.DTOs.Document.PublicDocumentDto>>.ErrorResponse("ترخیص‌کار یافت نشد"));
+
+            var docs = await _context.Documents
+                .Where(d => d.UserId == agent.UserId && d.Status == Broker.Models.DocumentVerificationStatus.Approved)
+                .OrderByDescending(d => d.CreatedAt)
+                .Select(d => new Broker.DTOs.Document.PublicDocumentDto
+                {
+                    Id = d.Id,
+                    DocumentType = d.DocumentType,
+                    FilePath = d.FilePath,
+                    Description = d.Description,
+                    Status = d.Status.ToString(),
+                    CreatedAt = d.CreatedAt
+                })
+                .ToListAsync();
+
+            return Ok(ApiResponse<List<Broker.DTOs.Document.PublicDocumentDto>>.SuccessResponse(docs));
         }
 
         [HttpPost("register")]

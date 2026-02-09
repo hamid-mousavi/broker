@@ -34,12 +34,12 @@ export default function PublicLayout({ children }) {
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="font-semibold text-lg tracking-tight">پلتفرم ترخیص کالا</Link>
           <nav className="hidden md:flex items-center gap-6 text-sm text-slate-600">
-            <Link to="/#features" className="hover:text-slate-900 flex items-center gap-2">
+            <a href="/#features" className="hover:text-slate-900 flex items-center gap-2">
               <Star size={16} /> ویژگی‌ها
-            </Link>
-            <Link to="/#brokers" className="hover:text-slate-900 flex items-center gap-2">
+            </a>
+            <a href="/#brokers" className="hover:text-slate-900 flex items-center gap-2">
               <Search size={16} /> ترخیص‌کاران
-            </Link>
+            </a>
             <Link to="/brokers" className="hover:text-slate-900 flex items-center gap-2">
               <Search size={16} /> جستجو
             </Link>
@@ -82,12 +82,12 @@ export default function PublicLayout({ children }) {
         {open && (
           <div className="md:hidden border-t bg-white/90">
             <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col gap-2 text-sm text-slate-700">
-              <Link to="/#features" onClick={() => setOpen(false)} className="flex items-center gap-2">
+              <a href="/#features" onClick={() => setOpen(false)} className="flex items-center gap-2">
                 <Star size={16} /> ویژگی‌ها
-              </Link>
-              <Link to="/#brokers" onClick={() => setOpen(false)} className="flex items-center gap-2">
+              </a>
+              <a href="/#brokers" onClick={() => setOpen(false)} className="flex items-center gap-2">
                 <Search size={16} /> ترخیص‌کاران
-              </Link>
+              </a>
               <Link to="/brokers" onClick={() => setOpen(false)} className="flex items-center gap-2">
                 <Search size={16} /> جستجو
               </Link>
@@ -131,8 +131,8 @@ export default function PublicLayout({ children }) {
         <div className="max-w-6xl mx-auto px-4 py-6 text-sm text-slate-500 flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
           <div>© 2026 پلتفرم ترخیص کالا</div>
           <div className="flex gap-4">
-            <Link to="/#features">ویژگی‌ها</Link>
-            <Link to="/#brokers">ترخیص‌کاران</Link>
+            <a href="/#features">ویژگی‌ها</a>
+            <a href="/#brokers">ترخیص‌کاران</a>
             <Link to="/brokers">جستجو</Link>
           </div>
         </div>

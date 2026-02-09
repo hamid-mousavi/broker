@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { Award, ShieldCheck, MessageCircle, Clock, Search, Star, MapPin, Sparkles } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Award, ShieldCheck, MessageCircle, Clock, Search, Star, Sparkles } from 'lucide-react'
 import PublicLayout from '../components/PublicLayout'
 import RequestModal from '../components/RequestModal'
+import BrokerCard from '../components/BrokerCard'
 import api from '../utils/api'
 
 const FEATURES = [
@@ -82,10 +84,21 @@ export default function Home() {
   const [topBrokers, setTopBrokers] = useState(TOP_BROKERS)
   const [stats, setStats] = useState(STATS)
   const [testimonials, setTestimonials] = useState(TESTIMONIALS)
+  const [quickSearch, setQuickSearch] = useState('')
+  const navigate = useNavigate()
 
   const openRequest = (broker) => {
     setSelectedBroker(broker)
     setRequestOpen(true)
+  }
+
+  const handleQuickSearch = () => {
+    const term = quickSearch.trim()
+    if (!term) {
+      navigate('/brokers')
+      return
+    }
+    navigate(`/brokers?search=${encodeURIComponent(term)}`)
   }
 
   useEffect(() => {
@@ -100,8 +113,13 @@ export default function Home() {
             name: agent.companyName,
             city: agent.city || '-',
             rating: Number(agent.averageRating || 0),
+            ratingCount: Number(agent.totalRatings || 0),
             tags: agent.specializations || [],
             completedRequests: Number(agent.completedRequests || 0),
+            experience: agent.yearsOfExperience || 0,
+            phoneNumber: agent.phoneNumber || '',
+            hasVerifiedDocuments: Boolean(agent.hasVerifiedDocuments),
+            price: null,
           }))
           const sorted = [...mapped].sort((a, b) => b.rating - a.rating).slice(0, 3)
           setTopBrokers(sorted)
@@ -198,9 +216,17 @@ export default function Home() {
                 <input
                   className="px-3 py-2 pr-9 rounded border w-full"
                   placeholder="مثلا: ترخیص‌کار تهران"
+                  value={quickSearch}
+                  onChange={(event) => setQuickSearch(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') handleQuickSearch()
+                  }}
                 />
               </div>
-              <button className="px-4 py-2 rounded accent-btn flex items-center gap-2">
+              <button
+                className="px-4 py-2 rounded accent-btn flex items-center gap-2"
+                onClick={handleQuickSearch}
+              >
                 <Search size={16} /> جستجو
               </button>
             </div>
@@ -232,30 +258,14 @@ export default function Home() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {topBrokers.map((broker) => (
-            <div key={broker.name} className="card p-4">
-              <div className="flex items-center justify-between">
-                <div className="font-semibold">{broker.name}</div>
-                <div className="text-sm text-amber-500 flex items-center gap-1">
-                  <Star size={14} /> {broker.rating}
-                </div>
-              </div>
-              <div className="text-xs text-slate-500 mt-1 flex items-center gap-1">
-                <MapPin size={12} /> {broker.city}
-              </div>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {broker.tags.map((tag) => (
-                  <span key={tag} className="text-xs px-2 py-1 rounded-full bg-slate-100">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <button
-                className="mt-4 w-full px-3 py-2 rounded accent-btn text-sm"
-                onClick={() => openRequest(broker)}
-              >
-                ارسال درخواست
-              </button>
-            </div>
+            <BrokerCard
+              key={broker.id}
+              broker={broker}
+              view="grid"
+              showActions
+              showVerifiedBadge
+              onRequest={openRequest}
+            />
           ))}
         </div>
       </section>

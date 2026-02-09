@@ -25,6 +25,8 @@ namespace Broker.DTOs.Agent
         public string? NationalId { get; set; }
         public string? RegistrationNumber { get; set; }
         public string? EconomicCode { get; set; }
+        public string? PhoneNumber { get; set; }
+        public bool HasVerifiedDocuments { get; set; }
         public List<string> Specializations { get; set; } = new();
         public DateTime CreatedAt { get; set; }
     }

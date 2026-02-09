@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Search, SlidersHorizontal, LayoutGrid, List, MapPin } from 'lucide-react'
 import BrokerCard from '../components/BrokerCard'
 import AdvancedSearchFilters from '../components/AdvancedSearchFilters'
@@ -16,6 +17,17 @@ const DEFAULT_FILTERS = {
 }
 
 export default function SearchBrokers() {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const isLoggedIn = !!localStorage.getItem('token')
+  const userInfo = useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem('userInfo') || 'null')
+    } catch (err) {
+      return null
+    }
+  }, [])
+  const isOwner = userInfo?.role === 'CargoOwner'
   const [filters, setFilters] = useState(() => {
     const saved = localStorage.getItem('brokerFilters')
     return saved ? JSON.parse(saved) : DEFAULT_FILTERS
@@ -30,6 +42,16 @@ export default function SearchBrokers() {
   const [totalPages, setTotalPages] = useState(1)
   const [requestOpen, setRequestOpen] = useState(false)
   const [selectedBroker, setSelectedBroker] = useState(null)
+  const [favoriteIds, setFavoriteIds] = useState([])
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const term = params.get('search')
+    if (term) {
+      setSearchTerm(term)
+      setPageNumber(1)
+    }
+  }, [location.search])
 
   const filtered = useMemo(() => {
     let list = [...brokers]
@@ -48,6 +70,44 @@ export default function SearchBrokers() {
     if (sortBy === 'price') list.sort((a, b) => a.price - b.price)
     return list
   }, [filtered, sortBy])
+
+  const favoriteSet = useMemo(() => new Set(favoriteIds), [favoriteIds])
+
+  useEffect(() => {
+    if (!isLoggedIn || !isOwner) {
+      setFavoriteIds([])
+      return
+    }
+    const loadFavorites = async () => {
+      try {
+        const res = await api.get('/cargo-owners/favorites')
+        const items = res?.data?.data || []
+        setFavoriteIds(items.map((item) => item?.agent?.id).filter(Boolean))
+      } catch (err) {
+        setFavoriteIds([])
+      }
+    }
+    loadFavorites()
+  }, [isLoggedIn, isOwner])
+
+  const handleToggleFavorite = async (brokerId) => {
+    if (!isLoggedIn) {
+      navigate('/login')
+      return
+    }
+    if (!isOwner) return
+    try {
+      if (favoriteSet.has(brokerId)) {
+        await api.delete(`/cargo-owners/favorites/${brokerId}`)
+        setFavoriteIds((prev) => prev.filter((id) => id !== brokerId))
+      } else {
+        await api.post(`/cargo-owners/favorites/${brokerId}`)
+        setFavoriteIds((prev) => [...prev, brokerId])
+      }
+    } catch (err) {
+      // ignore for now
+    }
+  }
 
   const handleSave = () => {
     localStorage.setItem('brokerFilters', JSON.stringify(filters))
@@ -77,17 +137,19 @@ export default function SearchBrokers() {
         if (!payload) {
           throw new Error(response?.data?.message || 'دریافت اطلاعات ناموفق بود')
         }
-        const mapped = (payload.agents || []).map((agent) => ({
-          id: agent.id,
-          name: agent.companyName,
-          city: agent.city || '-',
-          province: agent.province || '-',
-          rating: Number(agent.averageRating || 0),
-          ratingCount: Number(agent.totalRatings || 0),
-          experience: agent.yearsOfExperience || 0,
-          tags: agent.specializations || [],
-          price: null,
-        }))
+          const mapped = (payload.agents || []).map((agent) => ({
+            id: agent.id,
+            name: agent.companyName,
+            city: agent.city || '-',
+            province: agent.province || '-',
+            rating: Number(agent.averageRating || 0),
+            ratingCount: Number(agent.totalRatings || 0),
+            experience: agent.yearsOfExperience || 0,
+            tags: agent.specializations || [],
+            phoneNumber: agent.phoneNumber || '',
+            hasVerifiedDocuments: Boolean(agent.hasVerifiedDocuments),
+            price: null,
+          }))
         setBrokers(mapped)
         setTotalPages(payload.totalPages || 1)
       } catch (err) {
@@ -170,9 +232,20 @@ export default function SearchBrokers() {
               <div className="text-sm font-semibold mb-2 flex items-center gap-2">
                 <MapPin size={16} /> نقشه موقعیت‌ها
               </div>
-              <div className="h-48 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 text-sm">
-                نقشه گوگل (Placeholder)
-              </div>
+              {isLoggedIn ? (
+                <iframe
+                  title="map"
+                  className="w-full h-48 rounded border"
+                  loading="lazy"
+                  src={`https://www.google.com/maps?q=${encodeURIComponent(
+                    `${filters.city || ''} ${filters.province || ''}`.trim() || 'Iran'
+                  )}&output=embed`}
+                />
+              ) : (
+                <div className="h-48 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 text-sm">
+                  برای نمایش نقشه وارد شوید
+                </div>
+              )}
             </div>
 
             {error && (
@@ -190,6 +263,10 @@ export default function SearchBrokers() {
                     key={broker.id}
                     broker={broker}
                     view={view}
+                    showActions
+                    showVerifiedBadge
+                    isFavorite={favoriteSet.has(broker.id)}
+                    onToggleFavorite={isOwner ? handleToggleFavorite : null}
                     onRequest={(b) => {
                       setSelectedBroker(b)
                       setRequestOpen(true)

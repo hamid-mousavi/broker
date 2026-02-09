@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import PublicLayout from '../components/PublicLayout'
 import RequestModal from '../components/RequestModal'
+import { Phone, Heart, Share2, MapPin } from 'lucide-react'
 import api from '../utils/api'
 
 const TABS = [
@@ -28,6 +29,8 @@ export default function BrokerProfile() {
   const [myRating, setMyRating] = useState(null)
   const [editMode, setEditMode] = useState(false)
   const [hoverScore, setHoverScore] = useState(0)
+  const [documents, setDocuments] = useState([])
+  const [favorite, setFavorite] = useState(false)
 
   const userInfo = (() => {
     try {
@@ -51,16 +54,18 @@ export default function BrokerProfile() {
       setLoading(true)
       setError('')
       try {
-        const [profileRes, reviewsRes, statsRes, userRes] = await Promise.all([
+        const [profileRes, reviewsRes, statsRes, userRes, docsRes] = await Promise.all([
           api.get(`/brokers/${id}`),
           api.get(`/brokers/${id}/reviews`, { params: { pageNumber: 1, pageSize: 5 } }),
           api.get(`/brokers/${id}/stats`),
           api.get('/auth/profile').catch(() => null),
+          api.get(`/brokers/${id}/documents`).catch(() => null),
         ])
         setProfile(profileRes?.data?.data || null)
         setReviews(reviewsRes?.data?.data || null)
         setStats(statsRes?.data?.data || null)
         setUserProfile(userRes?.data?.data || null)
+        setDocuments(docsRes?.data?.data || [])
 
         if (userInfo?.role === 'CargoOwner') {
           const list = Array.isArray(reviewsRes?.data?.data)
@@ -80,6 +85,54 @@ export default function BrokerProfile() {
     }
     load()
   }, [id])
+
+  useEffect(() => {
+    const loadFav = async () => {
+      if (!isOwner || !isLoggedIn) return
+      try {
+        const res = await api.get('/cargo-owners/favorites')
+        const list = res?.data?.data || []
+        const exists = list.some((item) => item.agent?.id === Number(id))
+        setFavorite(exists)
+      } catch (err) {
+        setFavorite(false)
+      }
+    }
+    loadFav()
+  }, [id, isOwner, isLoggedIn])
+
+  const toggleFavorite = async () => {
+    if (!isLoggedIn || !isOwner) return
+    try {
+      if (favorite) {
+        await api.delete(`/cargo-owners/favorites/${id}`)
+        setFavorite(false)
+      } else {
+        await api.post(`/cargo-owners/favorites/${id}`)
+        setFavorite(true)
+      }
+    } catch (err) {
+      // ignore
+    }
+  }
+
+  const shareProfile = async () => {
+    const url = window.location.href
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: profile?.companyName || 'ترخیص‌کار', url })
+        return
+      } catch (err) {
+        // ignore
+      }
+    }
+    await navigator.clipboard.writeText(url)
+  }
+
+  const resolveMapQuery = () => {
+    if (!profile) return ''
+    return profile.address || `${profile.city || ''} ${profile.province || ''}`.trim()
+  }
 
   const ratingSummary = stats?.summary || stats
   const reviewItems = Array.isArray(reviews)
@@ -207,8 +260,13 @@ export default function BrokerProfile() {
                   >
                     ارسال درخواست
                   </button>
-                  <button className="px-4 py-2 rounded border">ذخیره در علاقه‌مندی‌ها</button>
-                  <button className="px-4 py-2 rounded border">اشتراک‌گذاری</button>
+                  <button className="px-4 py-2 rounded border flex items-center gap-2" onClick={toggleFavorite}>
+                    <Heart size={16} className={favorite ? 'text-rose-600' : ''} />
+                    {favorite ? 'ذخیره شد' : 'ذخیره در علاقه‌مندی‌ها'}
+                  </button>
+                  <button className="px-4 py-2 rounded border flex items-center gap-2" onClick={shareProfile}>
+                    <Share2 size={16} /> اشتراک‌گذاری
+                  </button>
                 </div>
               </div>
             </div>
@@ -334,7 +392,23 @@ export default function BrokerProfile() {
             {activeTab === 'portfolio' && (
               <div className="card p-4">
                 <div className="font-semibold mb-2">نمونه کارها</div>
-                <div className="text-sm text-slate-500">نمونه کار ثبت نشده است.</div>
+                {documents.length > 0 ? (
+                  <div className="space-y-2 text-sm">
+                    {documents.map((doc) => (
+                      <a
+                        key={doc.id}
+                        className="block underline"
+                        href={resolveMediaUrl(doc.filePath)}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {doc.documentType} {doc.description ? `- ${doc.description}` : ''}
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-sm text-slate-500">مدرک تایید شده‌ای ثبت نشده است.</div>
+                )}
               </div>
             )}
 
@@ -348,9 +422,22 @@ export default function BrokerProfile() {
                 ) : (
                   <div>آدرس حقیقی: {profile.personalAddress || '-'}</div>
                 )}
-                <div>شماره موبایل: {userProfile?.phoneNumber || '-'}</div>
+                <div>شماره موبایل: {profile.phoneNumber || '-'}</div>
                 <div>وب‌سایت: {profile.website || '-'}</div>
                 <div>شماره مجوز: {profile.licenseNumber || '-'}</div>
+                {isLoggedIn && (
+                  <div className="mt-3">
+                    <div className="text-xs text-slate-500 mb-2 flex items-center gap-2">
+                      <MapPin size={14} /> موقعیت روی نقشه
+                    </div>
+                    <iframe
+                      title="map"
+                      className="w-full h-48 rounded border"
+                      loading="lazy"
+                      src={`https://www.google.com/maps?q=${encodeURIComponent(resolveMapQuery())}&output=embed`}
+                    />
+                  </div>
+                )}
               </div>
             )}
           </div>

@@ -35,5 +35,15 @@ namespace Broker.DTOs.Document
         public string Type { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
     }
+
+    public class PublicDocumentDto
+    {
+        public int Id { get; set; }
+        public string DocumentType { get; set; } = string.Empty;
+        public string FilePath { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public string Status { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+    }
 }
 

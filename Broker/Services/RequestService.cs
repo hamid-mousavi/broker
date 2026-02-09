@@ -274,9 +274,9 @@ namespace Broker.Services
                 StatusName = request.Status.ToString(),
                 Deadline = request.Deadline,
                 CreatedAt = request.CreatedAt,
+                UpdatedAt = request.UpdatedAt,
                 CompletedAt = request.CompletedAt
             };
         }
     }
 }
-
