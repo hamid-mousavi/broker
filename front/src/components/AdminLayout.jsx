@@ -48,6 +48,9 @@ export default function AdminLayout(){
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <div className="flex">
+        <aside className="hidden md:block">
+          <Sidebar />
+        </aside>
         <div className="flex-1 p-4">
           <header className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
@@ -77,9 +80,6 @@ export default function AdminLayout(){
             <Outlet />
           </main>
         </div>
-        <aside className="hidden md:block">
-          <Sidebar />
-        </aside>
       </div>
       {open && (
         <div className="md:hidden fixed inset-0 bg-black/30 z-30" onClick={() => setOpen(false)}>

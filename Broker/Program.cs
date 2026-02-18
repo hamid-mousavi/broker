@@ -109,6 +109,42 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Auto-apply EF Core migrations on startup (useful for docker compose startup ordering)
+var autoMigrateOnStartup = app.Configuration.GetValue("AutoMigrateOnStartup", true);
+if (autoMigrateOnStartup)
+{
+    var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("StartupMigration");
+    const int maxRetries = 10;
+    const int delaySeconds = 3;
+
+    for (var attempt = 1; attempt <= maxRetries; attempt++)
+    {
+        try
+        {
+            using var scope = app.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            await dbContext.Database.MigrateAsync();
+            logger.LogInformation("Database migrations applied successfully.");
+            break;
+        }
+        catch (Exception ex)
+        {
+            if (attempt == maxRetries)
+            {
+                logger.LogError(ex, "Database migration failed after {MaxRetries} attempts.", maxRetries);
+                throw;
+            }
+
+            logger.LogWarning(ex,
+                "Database migration attempt {Attempt}/{MaxRetries} failed. Retrying in {DelaySeconds}s...",
+                attempt,
+                maxRetries,
+                delaySeconds);
+            await Task.Delay(TimeSpan.FromSeconds(delaySeconds));
+        }
+    }
+}
+
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
@@ -126,4 +162,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
